@@ -4,7 +4,7 @@
 
 /**
  * This function take a file name and mode as input and opens the file in the specified mode.
- * 
+ *
  * @param fileName Name of the file to be opened
  * @param mode Mode in which the file should be opened
  * @return The file pointer to the opened file
@@ -14,10 +14,48 @@ FILE *openFile(char *fileName, char *mode)
   FILE *file = fopen(fileName, mode);
   if (file == NULL)
   {
-    perror("fopen");
+    fprintf(stderr, "error: cannot open file '%s'\n", fileName);
     exit(EXIT_FAILURE);
   }
   return file;
+}
+
+void reverseText(FILE *input, FILE *output, int withOutput)
+{
+  char **lines = NULL;
+  char *buffer = NULL;
+  size_t line_count = 0;
+  ssize_t read;
+
+  // Read lines from input file into dynamically allocated memory
+  while ((read = getline(&buffer, &read, input)) != -1)
+  {
+    lines = realloc(lines, (line_count + 1) * sizeof(char *));
+    lines[line_count] = malloc(read);
+    if (!lines)
+    {
+      fprintf(stderr, "malloc failed\n");
+      exit(EXIT_FAILURE);
+    }
+    strcpy(lines[line_count], buffer);
+    line_count++;
+  }
+
+  for (size_t i = line_count; i > 0; i--)
+  {
+    if (withOutput == 1)
+    {
+      fprintf(output, "%s", lines[i - 1]);
+      free(lines[i - 1]);
+    }
+    else
+    {
+      fprintf(stdout, "%s", lines[i - 1]);
+    }
+  }
+
+  free(lines);
+  free(buffer);
 }
 
 int main(int argc, char *argv[])
@@ -29,53 +67,53 @@ int main(int argc, char *argv[])
   {
   case 1:
     /**
-         * In this case, the user has not provided any arguments.
-         * The program should prompt the user to enter the name of the file to be reversed.
-         * The reversed text should be written to tNumber of arguments provided is invalidhe standard output.
-         */
+     * In this case, the user has not provided any arguments.
+     * The program should prompt the user to enter the name of the file to be reversed.
+     * The reversed text should be written to tNumber of arguments provided is invalidhe standard output.
+     */
     {
       char fileName[100];
       printf("Enter the name of the file to be reversed: ");
       scanf("%s", fileName);
       inputFile = openFile(fileName, "r");
 
-      // TODO: Implement reverse logic
+      reverseText(inputFile, NULL, 0);
     }
     break;
 
   case 2:
     /**
-       * In this case, the user has provided the name of the file to be reversed.
-       * The reversed text should be written to the standard output.
-       */
+     * In this case, the user has provided the name of the file to be reversed.
+     * The reversed text should be written to the standard output.
+     */
     {
       inputFile = openFile(argv[1], "r");
 
-      // TODO: Implement reverse logic
+      reverseText(inputFile, NULL, 0);
     }
 
     break;
 
   case 3:
     /**
-       * In this case, the user has provided the name of the input file and the name of the output file.
-       * The reversed text should be written to the output file.
-       */
+     * In this case, the user has provided the name of the input file and the name of the output file.
+     * The reversed text should be written to the output file.
+     */
     {
       inputFile = openFile(argv[1], "r");
       outputFile = openFile(argv[2], "w");
 
       if (strcmp(argv[1], argv[2]) == 0)
       {
-        printf("Input and output file names cannot be the same");
+        fprintf(stderr, "error: input and output file must differ\n");
         exit(EXIT_FAILURE);
       }
 
-      // TODO: Implement reverse logic
+      reverseText(inputFile, outputFile, 1);
     }
     break;
   default:
-    printf("Number of arguments provided is invalid");
+    fprintf(stderr, "usage: reverse <input> <output>\n");
     exit(EXIT_FAILURE);
     break;
   }
