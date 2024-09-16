@@ -14,7 +14,7 @@ FILE *openFile(char *fileName, char *mode)
   FILE *file = fopen(fileName, mode);
   if (file == NULL)
   {
-    fprintf(stderr, "error: cannot open file '%s'\n", fileName);
+    fprintf(stderr, "reverse: cannot open file '%s'\n", fileName);
     exit(EXIT_FAILURE);
   }
   return file;
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     /**
      * In this case, the user has not provided any arguments.
      * The program should prompt the user to enter the name of the file to be reversed.
-     * The reversed text should be written to tNumber of arguments provided is invalidhe standard output.
+     * The reversed text should be written to standard output.
      */
     {
       char fileName[100];
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
       if (strcmp(argv[1], argv[2]) == 0)
       {
-        fprintf(stderr, "error: input and output file must differ\n");
+        fprintf(stderr, "reverse: input and output file must differ\n");
         exit(EXIT_FAILURE);
       }
 
@@ -118,5 +118,5 @@ int main(int argc, char *argv[])
     break;
   }
 
-  return 0;
+  exit(EXIT_SUCCESS);
 }
