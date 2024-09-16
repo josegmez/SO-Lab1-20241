@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 /**
  * This function take a file name and mode as input and opens the file in the specified mode.
@@ -103,7 +104,11 @@ int main(int argc, char *argv[])
       inputFile = openFile(argv[1], "r");
       outputFile = openFile(argv[2], "w");
 
-      if (strcmp(argv[1], argv[2]) == 0)
+      struct stat inputStat, outputStat;
+      stat(argv[1], &inputStat);
+      stat(argv[2], &outputStat);
+
+      if (inputStat.st_ino == outputStat.st_ino)
       {
         fprintf(stderr, "reverse: input and output file must differ\n");
         exit(EXIT_FAILURE);
