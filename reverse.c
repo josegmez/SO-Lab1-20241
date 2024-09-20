@@ -28,8 +28,10 @@ void reverseText(FILE *input, FILE *output, int withOutput)
   size_t line_count = 0;
   ssize_t read;
 
+  FILE *stream = input ? input : stdin;
+
   // Read lines from input file into dynamically allocated memory
-  while ((read = getline(&buffer, &read, input)) != -1)
+  while ((read = getline(&buffer, &read, stream)) != -1)
   {
     lines = realloc(lines, (line_count + 1) * sizeof(char *));
     lines[line_count] = malloc(read);
@@ -69,16 +71,11 @@ int main(int argc, char *argv[])
   case 1:
     /**
      * In this case, the user has not provided any arguments.
-     * The program should prompt the user to enter the name of the file to be reversed.
+     * The program should prompt the user to enter the content to be reversed.
      * The reversed text should be written to standard output.
      */
     {
-      char fileName[100];
-      printf("Enter the name of the file to be reversed: ");
-      scanf("%s", fileName);
-      inputFile = openFile(fileName, "r");
-
-      reverseText(inputFile, NULL, 0);
+      reverseText(NULL, NULL, 0);
     }
     break;
 
